@@ -13,11 +13,20 @@ height = 50
 vel = 25
 isJump = False
 jumpCount = 10
-
+# COLORS #
+black = (0,0,0)
+white = (255,255,255)
+red = (255,0,0)
+green = (0,255,0)
+blue = (0,0,255)
+magenta = (255,0,255)
+grey = (100,100,100)
+colors = [white, red, green, blue, magenta]
+colorList = random.sample(colors,4)
 # Classes, I've only started learning about classes so most of this is experimental, ha!
 # Player class
 class player(object):
-	def __init__(self, x, y, width, height):
+	def __init__(self, x, y, width, height, color):
 		self.x = x
 		self.y = y
 		self.width = width
@@ -26,82 +35,63 @@ class player(object):
 		self.isJump = False
 		self.jumpCount = 10
 		self.hitbox = (self.x, self.y, 50, 50)
+		self.color = grey
 	def draw(self,win):
 		self.hitbox = (self.x, self.y, 50, 50)
 		#draw mom to the screen
-		pygame.draw.rect(win, (255,0,0), self.hitbox,2)
-
+		pygame.draw.rect(win, grey, self.hitbox,0)
 # Sock class (item to be collected)
 class sock(object):
-	def __init__(self, x, y, width, height):
-		self.x = x
-		self.y = y
+	def __init__(self, x, y, width, height, color):
+		self.x = random.randint(25,350)
+		self.y = y + 5
 		self.width = width
 		self.height = height
 		self.vel = 5
 		self.doesHave = False
-		# A) boundaries of the sock
-		self.hitbox = (random.randint(25,350), self.y, 20, 20)
-		# B) random placement of sock when spawned
-		self.hitboxB = (random.randint(25,350), self.y, 20, 20)
-		self.hitboxC = (random.randint(25,350), self.y, 20, 20)
-		# self.hitboxD = (random.randint(25,350), self.y, 20, 20)
+		self.hitbox = (self.x, self.y, 20, 20)
+		self.color = color
 	def draw(self,win):
-		if self.doesHave == False:
-			self.hitbox = (self.x, self.y, 20, 20)
-			# B) - case in point
-			pygame.draw.rect(win, (100,100,100), self.hitbox,0)
-			pygame.draw.rect(win, (0,0,255), self.hitboxB,0)
-			if self.hitboxB[1] < self.hitbox[1] + self.hitbox[3] and self.hitboxB[1] + self.hitboxB[3] > self.hitbox[1]:
-				return True
-
-			pygame.draw.rect(win, (255,0,255), self.hitboxC,0)
-			if self.hitboxC[1] < self.hitboxB[1] + self.hitboxB[3] and self.hitboxC[1] + self.hitboxC[3] > self.hitboxB[1]:
-				if self.hitboxC[1] < self.hitbox[1] + self.hitbox[3] and self.hitboxC[1] + self.hitboxC[3] > self.hitbox[1]:
-					return True	
-
-			# pygame.draw.rect(win, (0,0,255), self.hitboxC,2)
-			# pygame.draw.rect(win, (0,0,255), self.hitboxD,2)
-		elif self.doesHave == True:
+		pygame.draw.rect(win, self.color, self.hitbox,0)
+		if self.doesHave == True:
 			self.hitbox = ((mom.hitbox[0] + 5, mom.hitbox[1] + 5, 20, 20))
-			self.hitboxB = ((sock.hitboxB[0], sock.hitboxB[1], 20, 20))
-			# A) - case in point
-			pygame.draw.rect(win, (100,100,100), self.hitbox,1)
-			pygame.draw.rect(win, (0,0,255), self.hitboxB,0)
-
+			pygame.display.update()
 # Refreshes our screen so player can see updated changes like position
 def redrawGameWindow():
 	global walkCount
-	win.fill((0,0,0))
+	win.fill(black)
 	mom.draw(win)
-	sock.draw(win)
+	sock.draw(sockA,win)
+	sock.draw(sockB,win)
+	sock.draw(sockC,win)
+	sock.draw(sockD,win)
 	pygame.display.update()
-
 # Lists?
-mom = player(450, 450, 50, 50)
-sock = sock(50, 450, 20, 20)
+mom = player(450, 450, 50, 50, grey)
+sockA = sock(random.randint(25,350), 450, 20, 20, colorList[0])
+sockB = sock(random.randint(25,350), 450, 20, 20, colorList[1])
+sockC = sock(random.randint(25,350), 450, 20, 20, colorList[2])
+sockD = sock(random.randint(25,350), 450, 20, 20, colorList[3])
 run = True
 sockCount = 0
 sockList = []
-
 # Main Loop
 while run:
 	# Set a rate of time for our world
 	clock.tick(30)
 	# Moving without the sock
-	if sock.doesHave == False:
-		if mom.hitbox[1] < sock.hitbox[1] + sock.hitbox[3] and mom.hitbox[1] + mom.hitbox[3] > sock.hitbox[1]:
-				if mom.hitbox[0] + mom.hitbox[2] > sock.hitbox[0] and mom.hitbox[0] < sock.hitbox[0] + sock.hitbox[2]:
-					sock.doesHave = True
-					sock.draw(win)
+	if sockA.doesHave == False:
+		if mom.hitbox[1] < sockA.hitbox[1] + sockA.hitbox[3] and mom.hitbox[1] + mom.hitbox[3] > sockA.hitbox[1]:
+				if mom.hitbox[0] + mom.hitbox[2] > sockA.hitbox[0] and mom.hitbox[0] < sockA.hitbox[0] + sockA.hitbox[2]:
+					sockA.doesHave = True
+					sockA.draw(win)
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			run = False
-
 	# movements and interactions
 	keys = pygame.key.get_pressed()
 	# if mom does not have the sock
-	if sock.doesHave == False:
+	if sockA.doesHave == False:
 		# then she moves when we use the controls
 		if keys[pygame.K_LEFT] and mom.x > mom.vel:
 			mom.x -= mom.vel
@@ -123,14 +113,14 @@ while run:
 				mom.isJump = False
 				mom.jumpCount = 10
 	# if mom DOES have the sock
-	elif sock.doesHave == True:
+	elif sockA.doesHave == True:
 		# mom carries the sock around
 		if keys[pygame.K_LEFT] and mom.x > mom.vel:
 			mom.x -= mom.vel
-			sock.x -= sock.vel
+			sockA.x -= sockA.vel
 		elif keys[pygame.K_RIGHT] and mom.x < 500 - mom.width - mom.vel:
 			mom.x += mom.vel
-			sock.x += sock.vel
+			sockA.x += sockA.vel
 		# and she even jumps with the sock
 		if not(mom.isJump):
 			if keys[pygame.K_SPACE]:
@@ -146,7 +136,6 @@ while run:
 				mom.isJump = False
 				mom.jumpCount = 10
 	redrawGameWindow()
-
 # I've just been playing with ASCII art hehe
 print("""
 	*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.
