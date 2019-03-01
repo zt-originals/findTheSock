@@ -22,7 +22,6 @@ blue = (0,0,255)
 magenta = (255,0,255)
 grey = (100,100,100)
 colors = [white, red, green, blue, magenta]
-colorList = random.sample(colors,4)
 # Classes, I've only started learning about classes so most of this is experimental, ha!
 # Player class
 class player(object):
@@ -38,23 +37,42 @@ class player(object):
 		self.color = grey
 	def draw(self,win):
 		self.hitbox = (self.x, self.y, 50, 50)
+		if keys[pygame.K_DOWN]:
+			self.hitbox = (self.x - 12.5, self.y + 25, 75, 25)
 		#draw mom to the screen
 		pygame.draw.rect(win, grey, self.hitbox,0)
 # Sock class (item to be collected)
 class sock(object):
 	def __init__(self, x, y, width, height, color):
 		self.x = random.randint(25,350)
-		self.y = y + 5
+		self.y = y + 20
 		self.width = width
 		self.height = height
 		self.vel = 5
 		self.doesHave = False
 		self.hitbox = (self.x, self.y, 20, 20)
 		self.color = color
+		self.jumpCount = 10
+		self.isJump = False
 	def draw(self,win):
 		pygame.draw.rect(win, self.color, self.hitbox,0)
 		if self.doesHave == True:
-			self.hitbox = ((mom.hitbox[0] + 5, mom.hitbox[1] + 5, 20, 20))
+			self.hitbox = (mom.hitbox[0] - 25, mom.hitbox[1] - 15, 20, 20)
+			
+		if keys[pygame.K_LCTRL]:
+			if self.isJump == False:
+				self.doesHave = False
+				if self.jumpCount >= -10:
+					self.neg = 1
+				if self.jumpCount < 0:
+					self.neg = -1
+					# this is a cool way to make jumps look more realistic with MATHS!!!
+					self.y -= (self.jumpCount ** 2) * 0.25 * self.neg
+					self.jumpCount -= 1
+				else:
+					self.isJump = False
+					self.jumpCount = 10
+
 			pygame.display.update()
 # Refreshes our screen so player can see updated changes like position
 def redrawGameWindow():
@@ -66,14 +84,17 @@ def redrawGameWindow():
 	sock.draw(sockC,win)
 	sock.draw(sockD,win)
 	pygame.display.update()
-# Lists?
+xDestinations = [(10, 115), (135, 240), (260, 365), (385, 490)]
+xList = random.sample(xDestinations,4)
+colorList = random.sample(colors,4)
+sockA = sock(xList[0], 450, 20, 20, colorList[0])
+sockB = sock(xList[1], 450, 20, 20, colorList[1])
+sockC = sock(xList[2], 450, 20, 20, colorList[2])
+sockD = sock(xList[3], 450, 20, 20, colorList[3])
+sockList = [sockA, sockB, sockC, sockD]
 mom = player(450, 450, 50, 50, grey)
-sockA = sock(random.randint(25,350), 450, 20, 20, colorList[0])
-sockB = sock(random.randint(25,350), 450, 20, 20, colorList[1])
-sockC = sock(random.randint(25,350), 450, 20, 20, colorList[2])
-sockD = sock(random.randint(25,350), 450, 20, 20, colorList[3])
 run = True
-sockCount = 0
+# sockCount = 0
 sockList = []
 # Main Loop
 while run:
@@ -121,6 +142,11 @@ while run:
 		elif keys[pygame.K_RIGHT] and mom.x < 500 - mom.width - mom.vel:
 			mom.x += mom.vel
 			sockA.x += sockA.vel
+		# elif keys[pygame.K_LCTRL]:
+		# 	sockA.doesHave = False
+		# 	sockA.neg = -1
+		# 	sockA.jumpCount = 2
+		# 	sockA.y -= (sockA.jumpCount ** 2) * 0.25 * sockA.neg
 		# and she even jumps with the sock
 		if not(mom.isJump):
 			if keys[pygame.K_SPACE]:
@@ -138,16 +164,16 @@ while run:
 	redrawGameWindow()
 # I've just been playing with ASCII art hehe
 print("""
-	*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.
-	.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*
-	*.*.==================*.*.==================*.*.
-	.*.*==================.*.*==================.*.*
-	*.*.*.*.*.*.*/////////*.*.*.*.*.*||||.*.*.*.*.*.
-	.*.*/////////*.*.*.*.*.*.*.*.*.*.||||*.*.*.*.*.*
-	*.*.==================*.*.*.*.*.*||||.*.*.*.*.*.
-	.*.*==================.*.*.*.*.*.||||*.*games*.*
-	*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.
-	.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*
+*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.
+.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*
+*.*.==================*.*.==================*.*.
+.*.*==================.*.*==================.*.*
+*.*.*.*.*.*.*///////*.*.*.*.*.*.*||||.*.*.*.*.*.
+.*.*.*///////*.*.*.*.*.*.*.*.*.*.||||*.*.*.*.*.*
+*.*.==================*.*.*.*.*.*||||.*.*.*.*.*.
+.*.*==================.*.*.*.*.*.||||*.*games*.*
+*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.
+.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*
 	""")
 # Shut her down!
 pygame.quit()
