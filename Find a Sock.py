@@ -12,10 +12,6 @@ y = 425
 width = 50
 height = 50
 vel = 25
-isJump = False
-jumpCount = 10
-font1 = pygame.font.SysFont('comicsans', 100)
-font2 = pygame.font.SysFont('comicsans', 25)
 music = pygame.mixer.music.load('HappyJumping.mp3')
 pygame.mixer.music.play(-1)
 run = False
@@ -160,8 +156,12 @@ def redrawGameWindow():
 	# Start Screen
 	if end_it == False:
 		startScreen = win.fill(magenta)
+		rec1 = pygame.draw.rect(win, cyan, (25,25,450,450),0)
+		rec2 = pygame.draw.rect(win, yellow, (50,50,350,350),0)
+		rec3 = pygame.draw.rect(win, red, (75,75,225,225),0)
+		rec4 = pygame.draw.rect(win, green, (100,100,100,100),0)
 		font1 = pygame.font.SysFont('comicsans', 18)
-		textA = font1.render("Mom needs to find socks to match baby's outfit! Press RETURN to begin. ", 1, (255,255,255))
+		textA = font1.render("Mom needs to find socks to match baby's outfit! Press RETURN to begin. ", 1, (0,0,0))
 		win.blit(textA, (500/2 - (textA.get_width()/2),200))
 		pygame.display.update()
 		keys = pygame.key.get_pressed()
