@@ -1,5 +1,6 @@
 # Import pygame and initialize
 import random
+import time
 import pygame
 pygame.init()
 # Definitions and global variables
@@ -13,6 +14,12 @@ height = 50
 vel = 25
 isJump = False
 jumpCount = 10
+font1 = pygame.font.SysFont('comicsans', 100)
+font2 = pygame.font.SysFont('comicsans', 25)
+music = pygame.mixer.music.load('HappyJumping.mp3')
+pygame.mixer.music.play(-1)
+run = False
+end_it = False
 # COLORS #
 black = (0,0,0)
 white = (255,255,255)
@@ -24,6 +31,7 @@ cyan = (0,255,255)
 yellow = (255,255,0)
 grey = (100,100,100)
 colors = [white, red, green, blue]
+desiredColor = random.choice(colors)
 # Classes, I've only started learning about classes so most of this is experimental, ha!
 # Player class
 class player(object):
@@ -45,6 +53,16 @@ class player(object):
 			self.hitbox = (self.x - 12.5, self.y + 25, 75, 25)
 		#draw mom to the screen
 		pygame.draw.rect(win, grey, self.hitbox,0)
+class child(object):
+	def __init__(self, x, y, width, height, color):
+		self.x = 475
+		self.y = 5
+		self.width = 40
+		self.height = 40
+		self.color = desiredColor
+		self.hitbox = (self.x, self.y, self.width, self.height)
+	def draw(self,win):
+		pygame.draw.rect(win, self.color, self.hitbox,0)
 # Sock class (item to be collected)
 class sock(object):
 	def __init__(self, x, y, width, height, color,doesHave):
@@ -63,6 +81,16 @@ class sock(object):
 		keys = pygame.key.get_pressed()
 		# if mom DOES have the sock
 		if self.doesHave == True:
+			if self.color == childA.color:
+				font1 = pygame.font.SysFont('comicsans', 100)
+				textA = font1.render('You Win!', 1, (255,0,0))
+				win.blit(textA, (500/2 - (textA.get_width()/2),200))
+				pygame.display.update()
+				time.sleep(3)
+				run = False
+				end_it = True
+				pygame.display.quit()
+				pygame.quit()
 			self.hitbox = (mom.hitbox[0] - 25, mom.hitbox[1] - 25, 20, 20)
 			if keys[pygame.K_LCTRL]:
 				if self.isJump == False:
@@ -127,13 +155,29 @@ class sock(object):
 # Refreshes our screen so player can see updated changes like position
 def redrawGameWindow():
 	global walkCount
-	win.fill(black)
-	mom.draw(win)
-	sock.draw(sockA,win)
-	sock.draw(sockB,win)
-	sock.draw(sockC,win)
-	sock.draw(sockD,win)
-	pygame.display.update()
+	global end_it
+	global run
+	# Start Screen
+	if end_it == False:
+		startScreen = win.fill(magenta)
+		font1 = pygame.font.SysFont('comicsans', 18)
+		textA = font1.render("Mom needs to find socks to match baby's outfit! Press RETURN to begin. ", 1, (255,255,255))
+		win.blit(textA, (500/2 - (textA.get_width()/2),200))
+		pygame.display.update()
+		keys = pygame.key.get_pressed()
+		if keys[pygame.K_RETURN]:
+			end_it = True
+			run = True
+	# Main Game
+	elif run == True:
+		win.fill(black)
+		mom.draw(win)
+		sock.draw(sockA,win)
+		sock.draw(sockB,win)
+		sock.draw(sockC,win)
+		sock.draw(sockD,win)
+		child.draw(childA,win)
+		pygame.display.update()	
 xDestinations = [(10, 115), (135, 240), (260, 365), (385, 490)]
 xList = random.sample(xDestinations,4)
 colorList = random.sample(colors,4)
@@ -141,6 +185,8 @@ sockA = sock(xList[0], 480, 20, 20, colorList[0],False)
 sockB = sock(xList[1], 480, 20, 20, colorList[1],False)
 sockC = sock(xList[2], 480, 20, 20, colorList[2],False)
 sockD = sock(xList[3], 480, 20, 20, colorList[3],False)
+#childA_hitbox = (475, 5, 20, 20)
+childA = child(475,5,40,40,desiredColor)
 sockList = [sockA, sockB, sockC, sockD]
 mom = player(450, 450, 50, 50, grey)
 run = True
@@ -150,7 +196,7 @@ while run:
 	clock.tick(15)
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
-			run = False	
+			run = False
 	redrawGameWindow()
 # I've just been playing with ASCII art hehe
 print("""
@@ -166,4 +212,5 @@ print("""
 .*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*
 	""")
 # Shut her down!
+pygame.display.quit()
 pygame.quit()
