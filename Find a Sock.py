@@ -51,8 +51,8 @@ class player(object):
 		pygame.draw.rect(win, grey, self.hitbox,0)
 class child(object):
 	def __init__(self, x, y, width, height, color):
-		self.x = 475
-		self.y = 5
+		self.x = 450
+		self.y = 50
 		self.width = 40
 		self.height = 40
 		self.color = desiredColor
@@ -162,7 +162,10 @@ def redrawGameWindow():
 		rec4 = pygame.draw.rect(win, green, (100,100,100,100),0)
 		font1 = pygame.font.SysFont('comicsans', 18)
 		textA = font1.render("Mom needs to find socks to match baby's outfit! Press RETURN to begin. ", 1, (0,0,0))
+		textB = font1.render("Move with the arrows, jump with space and drop socks with left ctrl. ", 1, (0,0,0))
+
 		win.blit(textA, (500/2 - (textA.get_width()/2),200))
+		win.blit(textB, (500/2 - (textB.get_width()/2),225))
 		pygame.display.update()
 		keys = pygame.key.get_pressed()
 		if keys[pygame.K_RETURN]:
@@ -171,6 +174,9 @@ def redrawGameWindow():
 	# Main Game
 	elif run == True:
 		win.fill(black)
+		font1 = pygame.font.SysFont('comicsans', 18)
+		textC = font1.render("For Help - press 'H'", 1, cyan)
+		win.blit(textC, (20, 20))
 		mom.draw(win)
 		sock.draw(sockA,win)
 		sock.draw(sockB,win)
