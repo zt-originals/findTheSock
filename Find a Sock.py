@@ -90,7 +90,7 @@ class sock(object):
     def draw(self, win):
         pygame.draw.rect(win, self.color, self.hitbox, 0)
         keys = pygame.key.get_pressed()
-        # if mom DOES have the sock
+        # if sock is acquired
         if self.doesHave:
             # If the sock matches the child, you win and exit game
             if self.color == childA.color:
