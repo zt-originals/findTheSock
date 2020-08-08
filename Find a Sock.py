@@ -4,7 +4,7 @@ import time
 import pygame
 
 pygame.init()
-# Definitions and global variables
+# Definitions and common variables
 win = pygame.display.set_mode((500, 500))
 pygame.display.set_caption("The Finder of Socks")
 clock = pygame.time.Clock()
@@ -26,6 +26,12 @@ magenta = (255, 0, 255)
 cyan = (0, 255, 255)
 yellow = (255, 255, 0)
 grey = (100, 100, 100)
+colors = [white, red, green, blue]
+desiredColor = random.choice(colors)
+xDestinations = [(10, 115), (135, 240), (260, 365), (385, 490)]
+xList = random.sample(xDestinations, 4)
+colorList = random.sample(colors, 4)
+run = True
 
 
 # Classes, I've only started learning about classes so most of this is experimental, ha!
@@ -46,6 +52,7 @@ class player(object):
     def draw(self, win):
         self.hitbox = (self.x, self.y, 50, 50)
         keys = pygame.key.get_pressed()
+        # If you push down, mom squats
         if keys[pygame.K_DOWN]:
             self.hitbox = (self.x - 12.5, self.y + 25, 75, 25)
         # draw mom to the screen
@@ -62,6 +69,7 @@ class child(object):
         self.hitbox = (self.x, self.y, self.width, self.height)
 
     def draw(self, win):
+        # draw child in stationary spot
         pygame.draw.rect(win, self.color, self.hitbox, 0)
 
 
@@ -83,7 +91,8 @@ class sock(object):
         pygame.draw.rect(win, self.color, self.hitbox, 0)
         keys = pygame.key.get_pressed()
         # if mom DOES have the sock
-        if self.doesHave == True:
+        if self.doesHave:
+            # If the sock matches the child, you win and exit game
             if self.color == childA.color:
                 font1 = pygame.font.SysFont('comicsans', 100)
                 textA = font1.render('You Win!', 1, (255, 0, 0))
@@ -95,6 +104,7 @@ class sock(object):
                 pygame.display.quit()
                 pygame.quit()
             self.hitbox = (mom.hitbox[0] - 25, mom.hitbox[1] - 25, 20, 20)
+            # if left CTRL is pushed, drop the sock
             if keys[pygame.K_LCTRL]:
                 if self.isJump == False:
                     self.doesHave = False
@@ -195,20 +205,15 @@ def redrawGameWindow():
         pygame.display.update()
 
 
-colors = [white, red, green, blue]
-desiredColor = random.choice(colors)
-xDestinations = [(10, 115), (135, 240), (260, 365), (385, 490)]
-xList = random.sample(xDestinations, 4)
-colorList = random.sample(colors, 4)
 sockA = sock(xList[0], 480, 20, 20, colorList[0], False)
 sockB = sock(xList[1], 480, 20, 20, colorList[1], False)
 sockC = sock(xList[2], 480, 20, 20, colorList[2], False)
 sockD = sock(xList[3], 480, 20, 20, colorList[3], False)
+sockList = [sockA, sockB, sockC, sockD]
 # childA_hitbox = (475, 5, 20, 20)
 childA = child(475, 5, 40, 40, desiredColor)
-sockList = [sockA, sockB, sockC, sockD]
 mom = player(450, 450, 50, 50, grey)
-run = True
+
 # Main Loop
 while run:
     # Set a rate of time for our world
