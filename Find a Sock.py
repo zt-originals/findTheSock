@@ -79,83 +79,82 @@ class sock(object):
         self.jumpCount = 10
         self.isJump = False
 
-
-def draw(self, win):
-    pygame.draw.rect(win, self.color, self.hitbox, 0)
-    keys = pygame.key.get_pressed()
-    # if mom DOES have the sock
-    if self.doesHave == True:
-        if self.color == childA.color:
-            font1 = pygame.font.SysFont('comicsans', 100)
-            textA = font1.render('You Win!', 1, (255, 0, 0))
-            win.blit(textA, (500 / 2 - (textA.get_width() / 2), 200))
-            pygame.display.update()
-            time.sleep(3)
-            run = False
-            end_it = True
-            pygame.display.quit()
-            pygame.quit()
-        self.hitbox = (mom.hitbox[0] - 25, mom.hitbox[1] - 25, 20, 20)
-        if keys[pygame.K_LCTRL]:
-            if self.isJump == False:
-                self.doesHave = False
-                mom.own = False
-                self.y = 480
-                self.x = mom.x - 20
-                self.hitbox = (self.x, self.y, 20, 20)
-                self.neg = 1
+    def draw(self, win):
+        pygame.draw.rect(win, self.color, self.hitbox, 0)
+        keys = pygame.key.get_pressed()
+        # if mom DOES have the sock
+        if self.doesHave == True:
+            if self.color == childA.color:
+                font1 = pygame.font.SysFont('comicsans', 100)
+                textA = font1.render('You Win!', 1, (255, 0, 0))
+                win.blit(textA, (500 / 2 - (textA.get_width() / 2), 200))
+                pygame.display.update()
+                time.sleep(3)
+                run = False
+                end_it = True
+                pygame.display.quit()
+                pygame.quit()
+            self.hitbox = (mom.hitbox[0] - 25, mom.hitbox[1] - 25, 20, 20)
+            if keys[pygame.K_LCTRL]:
+                if self.isJump == False:
+                    self.doesHave = False
+                    mom.own = False
+                    self.y = 480
+                    self.x = mom.x - 20
+                    self.hitbox = (self.x, self.y, 20, 20)
+                    self.neg = 1
+                    if mom.jumpCount >= -10:
+                        mom.neg = 1
+                    if mom.jumpCount < 0:
+                        mom.neg = -1
+                    self.x -= 15
+                    self.jumpCount -= -1
+            # mom carries the sock around
+            if keys[pygame.K_LEFT] and mom.x > mom.vel:
+                mom.x -= mom.vel
+                self.x -= self.vel
+            elif keys[pygame.K_RIGHT] and mom.x < 500 - mom.width - mom.vel:
+                mom.x += mom.vel
+                self.x += self.vel
+            if not (mom.isJump):
+                if keys[pygame.K_SPACE]:
+                    mom.isJump = True
+            else:
                 if mom.jumpCount >= -10:
                     mom.neg = 1
-                if mom.jumpCount < 0:
-                    mom.neg = -1
-                self.x -= 15
-                self.jumpCount -= -1
-        # mom carries the sock around
-        if keys[pygame.K_LEFT] and mom.x > mom.vel:
-            mom.x -= mom.vel
-            self.x -= self.vel
-        elif keys[pygame.K_RIGHT] and mom.x < 500 - mom.width - mom.vel:
-            mom.x += mom.vel
-            self.x += self.vel
-        if not (mom.isJump):
-            if keys[pygame.K_SPACE]:
-                mom.isJump = True
-        else:
-            if mom.jumpCount >= -10:
-                mom.neg = 1
-                if mom.jumpCount < 0:
-                    mom.neg = -1
-                mom.y -= (mom.jumpCount ** 2) * 0.25 * mom.neg
-                mom.jumpCount -= 1
+                    if mom.jumpCount < 0:
+                        mom.neg = -1
+                    mom.y -= (mom.jumpCount ** 2) * 0.25 * mom.neg
+                    mom.jumpCount -= 1
+                else:
+                    mom.isJump = False
+                    mom.jumpCount = 10
+        elif self.doesHave == False:
+            self.x = self.x
+            self.y = 480
+            if mom.hitbox[1] < self.hitbox[1] + self.hitbox[3] and mom.hitbox[1] + mom.hitbox[3] > self.hitbox[1]:
+                if mom.hitbox[0] + mom.hitbox[2] > self.hitbox[0] and mom.hitbox[0] < self.hitbox[0] + self.hitbox[2]:
+                    if mom.own == False:
+                        self.doesHave = True
+                        mom.own = True
+            if keys[pygame.K_LEFT] and mom.x > mom.vel:
+                mom.x -= mom.vel
+            elif keys[pygame.K_RIGHT] and mom.x < 500 - mom.width - mom.vel:
+                mom.x += mom.vel
+            if not (mom.isJump):
+                if keys[pygame.K_SPACE]:
+                    mom.isJump = True
             else:
-                mom.isJump = False
-                mom.jumpCount = 10
-    elif self.doesHave == False:
-        self.x = self.x
-        self.y = 480
-        if mom.hitbox[1] < self.hitbox[1] + self.hitbox[3] and mom.hitbox[1] + mom.hitbox[3] > self.hitbox[1]:
-            if mom.hitbox[0] + mom.hitbox[2] > self.hitbox[0] and mom.hitbox[0] < self.hitbox[0] + self.hitbox[2]:
-                if mom.own == False:
-                    self.doesHave = True
-                    mom.own = True
-        if keys[pygame.K_LEFT] and mom.x > mom.vel:
-            mom.x -= mom.vel
-        elif keys[pygame.K_RIGHT] and mom.x < 500 - mom.width - mom.vel:
-            mom.x += mom.vel
-        if not (mom.isJump):
-            if keys[pygame.K_SPACE]:
-                mom.isJump = True
-        else:
-            if mom.jumpCount >= -10:
-                mom.neg = 1
-                if mom.jumpCount < 0:
-                    mom.neg = -1
-                # this is a cool way to make jumps look more realistic with MATHS!!!
-                mom.y -= (mom.jumpCount ** 2) * 0.25 * mom.neg
-                mom.jumpCount -= 1
-            else:
-                mom.isJump = False
-                mom.jumpCount = 10
+                if mom.jumpCount >= -10:
+                    mom.neg = 1
+                    if mom.jumpCount < 0:
+                        mom.neg = -1
+                    # this is a cool way to make jumps look more realistic with MATHS!!!
+                    mom.y -= (mom.jumpCount ** 2) * 0.25 * mom.neg
+                    mom.jumpCount -= 1
+                else:
+                    mom.isJump = False
+                    mom.jumpCount = 10
 
 
 # Refreshes our screen so player can see updated changes like position
@@ -188,10 +187,10 @@ def redrawGameWindow():
         textC = font1.render("For Help - press 'H'", 1, cyan)
         win.blit(textC, (20, 20))
         mom.draw(win)
-        draw(sockA, win)
-        draw(sockB, win)
-        draw(sockC, win)
-        draw(sockD, win)
+        sock.draw(sockA, win)
+        sock.draw(sockB, win)
+        sock.draw(sockC, win)
+        sock.draw(sockD, win)
         child.draw(childA, win)
         pygame.display.update()
 
@@ -230,7 +229,7 @@ print("""
 .*.*==================.*.*.*.*.*.||||*.*games*.*
 *.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.
 .*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*.*
-	""")
+""")
 # Shut her down!
 pygame.display.quit()
 pygame.quit()
